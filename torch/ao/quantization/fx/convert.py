@@ -148,6 +148,14 @@ def _replace_observer_with_quantize_dequantize_node_decomposed(
     if hasattr(activation_post_process, "is_dynamic"):
         is_dynamic = activation_post_process.is_dynamic  # type: ignore[assignment]
 
+    def add_dequantize_op_kwargs(dequantize_op, input_node):
+        dequantize_op_kwargs = {}
+        if 'val' in input_node.meta:
+            dq_out_dtype = input_node.meta['val'].dtype
+            if dq_out_dtype != torch.float32:
+                dequantize_op_kwargs = {"out_dtype": dq_out_dtype}
+        return dequantize_op_kwargs
+
     def get_dq_out_dtype(input_node):
         dq_out_dtype = torch.float32
         if 'val' in input_node.meta:
@@ -224,7 +232,7 @@ def _replace_observer_with_quantize_dequantize_node_decomposed(
             dequantized_node = graph.call_function(
                 dequantize_op,
                 tuple(dq_inputs),
-                {"out_dtype": get_dq_out_dtype(input_node)}
+                add_dequantize_op_kwargs(dequantize_op, input_node)
             )
 
             def remap_fn(x):
@@ -332,7 +340,7 @@ def _replace_observer_with_quantize_dequantize_node_decomposed(
             dequantized_node = graph.call_function(
                 dequantize_op,
                 tuple(dq_inputs),
-                {"out_dtype": get_dq_out_dtype(input_node)}
+                add_dequantize_op_kwargs(dequantize_op, input_node)
             )
 
             def remap_fn(x):
