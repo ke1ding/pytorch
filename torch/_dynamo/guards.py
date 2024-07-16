@@ -59,7 +59,6 @@ from torch._guards import (
     GuardSource,
     Source,
 )
-
 from torch._logging import structured
 from torch.fx.experimental.symbolic_shapes import (
     EqualityConstraint,
@@ -71,7 +70,6 @@ from torch.utils.weak import TensorWeakRef
 
 from . import config, convert_frame, exc, mutation_guard
 from .eval_frame import set_guard_error_hook
-
 from .source import (
     AttrSource,
     ChainedSource,
@@ -114,6 +112,7 @@ from .utils import (
     tuple_iterator_len,
     unpatched_nn_module_getattr,
 )
+
 
 if TYPE_CHECKING:
     from sympy import Symbol
